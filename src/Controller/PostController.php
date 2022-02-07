@@ -33,11 +33,15 @@ class PostController extends AbstractController
      */
     public function show(Post $post): Response
     {
-        return $this->json([
-            'id' => $post->getId(),
-            'title' => $post->getTitle(),
-            'created_at' => $post->getCreatedAt()->format('c'),
-            'body' => $post->getBody(),
-        ]);
+        /*
+         * Détecte la propriété private $title
+         * Recherche sur les méthodes suivantes:
+         *  - public function title()
+         *  - public function getTitle()
+         *  - public function hasTitle()
+         *  - public function isTitle()
+         */
+
+        return $this->json($post);
     }
 }
