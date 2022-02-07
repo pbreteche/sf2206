@@ -17,7 +17,11 @@ class DemoController extends AbstractController
 
     public function index2(int $id, Request $request): Response
     {
-        $option = $request->query->get('option', 'valeur par défaut');
+        $option = $request->query->get('option', 'valeur par défaut'); // $_GET
+        $requestBody = $request->getContent();
+        $postData = $request->request->all(); // $_POST
+
+        dump($postData);
 
         return $this->json([
             'id' => $id,
