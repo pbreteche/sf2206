@@ -63,4 +63,25 @@ class PostController extends AbstractController
             'id' => $post->getId(),
         ], Response::HTTP_SEE_OTHER);
     }
+
+    /**
+     * @Route("/post/{id}", requirements={"id": "\d+"}, methods="PUT")
+     */
+    public function update(
+        Post $post,
+        Request $request,
+        SerializerInterface $serializer,
+        EntityManagerInterface $manager
+    ): Response {
+        $serializer->deserialize($request->getContent(), Post::class, 'json', [
+            AbstractNormalizer::OBJECT_TO_POPULATE => $post,
+            AbstractNormalizer::IGNORED_ATTRIBUTES => ['createdAt'],
+        ]);
+
+        $manager->flush($post);
+
+        return $this->redirectToRoute('app_post_show', [
+            'id' => $post->getId(),
+        ], Response::HTTP_SEE_OTHER);
+    }
 }
