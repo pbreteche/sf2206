@@ -31,14 +31,8 @@ class PostController extends AbstractController
     /**
      * @Route("/post/{id}", requirements={"id": "\d+"}, methods="GET")
      */
-    public function show(int $id, PostRepository $repository): Response
+    public function show(Post $post): Response
     {
-        $post = $repository->find($id);
-
-        if (!$post) {
-            throw $this->createNotFoundException('No post with id :'.$id);
-        }
-
         return $this->json([
             'id' => $post->getId(),
             'title' => $post->getTitle(),
