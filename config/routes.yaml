@@ -1,3 +1,11 @@
-#index:
-#    path: /
-#    controller: App\Controller\DefaultController::index
+index:
+    path: /
+    controller: App\Controller\DemoController::index
+
+index2:
+    path: /demo/{id}
+    controller: App\Controller\DemoController::index2
+    defaults:
+        id: 1
+    requirements:
+        id: \d+
