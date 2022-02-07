@@ -10,6 +10,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
+use Symfony\Component\Serializer\SerializerInterface;
 
 class PostController extends AbstractController
 {
@@ -47,15 +48,13 @@ class PostController extends AbstractController
     /**
      * @Route("/post", methods="POST")
      */
-    public function new(Request $request, EntityManagerInterface $manager): Response
-    {
-        $data = json_decode($request->getContent(), true);
-
-        $post = (new Post())
-            ->setTitle($data['title'])
-            ->setBody($data['body'])
-            ->setCreatedAt(new \DateTimeImmutable())
-        ;
+    public function new(
+        Request $request,
+        EntityManagerInterface $manager,
+        SerializerInterface $serializer
+    ): Response {
+        $post = $serializer->deserialize($request->getContent(), Post::class, 'json');
+        $post->setCreatedAt(new \DateTimeImmutable());
 
         $manager->persist($post);
         $manager->flush();
