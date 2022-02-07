@@ -2,10 +2,10 @@
 
 namespace App\Controller;
 
-use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 
-class DemoController
+class DemoController extends AbstractController
 {
     public function index(): Response
     {
@@ -16,6 +16,9 @@ class DemoController
 
     public function index2(int $id): Response
     {
-        return new JsonResponse(['id' => $id]);
+        return $this->json([
+            'id' => $id,
+            'url' => $this->generateUrl('index2', ['id' => $id]),
+        ]);
     }
 }
