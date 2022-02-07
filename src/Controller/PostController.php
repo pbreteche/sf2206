@@ -11,7 +11,7 @@ use Symfony\Component\Routing\Annotation\Route;
 class PostController extends AbstractController
 {
     /**
-     * @Route("/post")
+     * @Route("/post", methods="GET")
      */
     public function index(PostRepository $repository): Response
     {
@@ -26,5 +26,24 @@ class PostController extends AbstractController
         }, $posts);
 
         return $this->json($normalizedPosts);
+    }
+
+    /**
+     * @Route("/post/{id}", requirements={"id": "\d+"}, methods="GET")
+     */
+    public function show(int $id, PostRepository $repository): Response
+    {
+        $post = $repository->find($id);
+
+        if (!$post) {
+            throw $this->createNotFoundException('No post with id :'.$id);
+        }
+
+        return $this->json([
+            'id' => $post->getId(),
+            'title' => $post->getTitle(),
+            'created_at' => $post->getCreatedAt()->format('c'),
+            'body' => $post->getBody(),
+        ]);
     }
 }
