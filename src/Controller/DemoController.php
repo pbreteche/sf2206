@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 class DemoController extends AbstractController
@@ -14,11 +15,14 @@ class DemoController extends AbstractController
         ]);
     }
 
-    public function index2(int $id): Response
+    public function index2(int $id, Request $request): Response
     {
+        $option = $request->query->get('option', 'valeur par défaut');
+
         return $this->json([
             'id' => $id,
             'url' => $this->generateUrl('index2', ['id' => $id]),
+            'option' => $option,
         ]);
     }
 }
