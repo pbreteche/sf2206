@@ -9,7 +9,6 @@ use Symfony\Component\Serializer\Annotation\Ignore;
 
 /**
  * @ORM\Entity(repositoryClass=PostRepository::class)
- * @ORM\Table(name="article")
  */
 class Post
 {
@@ -34,14 +33,14 @@ class Post
     private $body;
 
     /**
-     * @ORM\Column(type="datetime_immutable", name="creation_date")
+     * @ORM\Column(type="datetime_immutable")
      * @Ignore
      */
     private $createdAt;
 
     /**
-     * @ORM\ManyToOne(targetEntity=Category::class)
-     * @ORM\JoinColumn(name="category_id")
+     * @ORM\ManyToOne(targetEntity=Category::class, fetch="EAGER")
+     * @ORM\JoinColumn()
      */
     private $attachedTo;
 

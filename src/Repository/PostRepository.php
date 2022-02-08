@@ -26,8 +26,10 @@ class PostRepository extends ServiceEntityRepository
     {
         return $this
             ->createQueryBuilder('post')
+            ->addSelect('category')
             ->andWhere('post.createdAt <= CURRENT_DATE()')
             ->orderBy('post.createdAt', 'DESC')
+            ->leftJoin('post.attachedTo', 'category')
             ->getQuery()
             ->setMaxResults($maxResults)
             ->setFirstResult($offset)
@@ -42,7 +44,8 @@ class PostRepository extends ServiceEntityRepository
     {
         return $this
             ->getEntityManager()->createQuery(
-                'SELECT post FROM '.Post::class.' post '.
+                'SELECT post, category FROM '.Post::class.' post '.
+                'LEFT JOIN post.attachedTo category '.
                 'WHERE post.createdAt <= CURRENT_DATE() '.
                 'ORDER BY post.createdAt DESC'
             )
