@@ -95,4 +95,15 @@ class Post
 
         return $this;
     }
+
+    /**
+     * @Groups("detail")
+     */
+    public function getCategoryName(): ?string
+    {
+        if ($this->attachedTo instanceof Category) {
+            return $this->attachedTo->getName();
+        }
+        return null;
+    }
 }
