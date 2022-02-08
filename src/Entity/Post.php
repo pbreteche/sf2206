@@ -8,6 +8,7 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Serializer\Annotation\Ignore;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Entity(repositoryClass=PostRepository::class)
@@ -25,12 +26,15 @@ class Post
     /**
      * @ORM\Column(type="string", length=255)
      * @Groups("main")
+     * @Assert\NotBlank
+     * @Assert\Length(max=70, groups={"create"})
      */
     private $title;
 
     /**
      * @ORM\Column(type="text")
      * @Groups("detail")
+     * @Assert\NotBlank
      */
     private $body;
 

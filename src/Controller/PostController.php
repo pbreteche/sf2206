@@ -71,10 +71,18 @@ class PostController extends AbstractController
     public function new(
         Request $request,
         EntityManagerInterface $manager,
-        SerializerInterface $serializer
+        SerializerInterface $serializer,
+        ValidatorInterface $validator,
+        ConstraintViolationListNormalizer $normalizer
     ): Response {
         $post = $serializer->deserialize($request->getContent(), Post::class, 'json');
         $post->setCreatedAt(new \DateTimeImmutable());
+
+        $errors = $validator->validate($post, null, ['create', 'Default']);
+
+        if (0 < $errors->count()) {
+            return $this->json($normalizer->normalize($errors), Response::HTTP_PRECONDITION_FAILED);
+        }
 
         $manager->persist($post);
         $manager->flush();
@@ -91,12 +99,20 @@ class PostController extends AbstractController
         Post $post,
         Request $request,
         SerializerInterface $serializer,
-        EntityManagerInterface $manager
+        EntityManagerInterface $manager,
+        ValidatorInterface $validator,
+        ConstraintViolationListNormalizer $normalizer
     ): Response {
         $serializer->deserialize($request->getContent(), Post::class, 'json', [
             AbstractNormalizer::OBJECT_TO_POPULATE => $post,
             AbstractNormalizer::IGNORED_ATTRIBUTES => ['createdAt'],
         ]);
+
+        $errors = $validator->validate($post);
+
+        if (0 < $errors->count()) {
+            return $this->json($normalizer->normalize($errors), Response::HTTP_PRECONDITION_FAILED);
+        }
 
         $manager->flush($post);
 
