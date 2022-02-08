@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Entity\KeyWord;
 use App\Entity\Post;
 use App\Normalizer\ConstraintViolationListNormalizer;
 use App\Repository\PostRepository;
@@ -102,5 +103,17 @@ class PostController extends AbstractController
         return $this->redirectToRoute('app_post_show', [
             'id' => $post->getId(),
         ], Response::HTTP_SEE_OTHER);
+    }
+
+    /**
+     * @Route("/post/with-keyword/{id}", requirements={"id": "\d+"}, methods="GET")
+     */
+    public function withKeyWord(KeyWord $keyWord, PostRepository $postRepository): Response
+    {
+        $posts = $postRepository->findHavingKeyword($keyWord);
+
+        return $this->json($posts, Response::HTTP_OK, [], [
+            AbstractNormalizer::GROUPS => ['main'],
+        ]);
     }
 }

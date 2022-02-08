@@ -2,6 +2,7 @@
 
 namespace App\Repository;
 
+use App\Entity\KeyWord;
 use App\Entity\Post;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
@@ -51,6 +52,21 @@ class PostRepository extends ServiceEntityRepository
             )
             ->setMaxResults($maxResults)
             ->setFirstResult($offset)
+            ->getResult()
+        ;
+    }
+
+    /**
+     * @return Post[]
+     */
+    public function findHavingKeyword(KeyWord $keyWord)
+    {
+        return $this
+            ->createQueryBuilder('post')
+            ->join('post.keywords', 'keywords')
+            ->andWhere(':keyword IN (keywords)')
+            ->getQuery()
+            ->setParameter('keyword', $keyWord)
             ->getResult()
         ;
     }
