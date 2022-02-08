@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\KeyWord;
 use App\Entity\Post;
 use App\Repository\PostRepository;
+use App\Validator\PageNumber;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -12,7 +13,6 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
 use Symfony\Component\Serializer\SerializerInterface;
-use Symfony\Component\Validator\Constraints\Regex;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class PostController extends AbstractController
@@ -29,9 +29,7 @@ class PostController extends AbstractController
     ): Response {
         $page = $request->query->get('page', 1);
 
-        $errors = $validator->validate($page, [
-            new Regex('/^[1-9]\d*$/', 'page should be only digits starting with "1 - 9"'),
-        ]);
+        $errors = $validator->validate($page, [new PageNumber()]);
 
         if (0 < $errors->count()) {
             return $this->json($errors, Response::HTTP_PRECONDITION_FAILED);
