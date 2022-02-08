@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\Post;
+use App\Normalizer\ConstraintViolationListNormalizer;
 use App\Repository\PostRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -11,10 +12,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
 use Symfony\Component\Serializer\SerializerInterface;
-use Symfony\Component\Validator\Constraints\Positive;
 use Symfony\Component\Validator\Constraints\Regex;
-use Symfony\Component\Validator\Constraints\Type;
-use Symfony\Component\Validator\ConstraintViolationInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class PostController extends AbstractController
@@ -26,6 +24,7 @@ class PostController extends AbstractController
      */
     public function index(
         Request $request,
+        ConstraintViolationListNormalizer $normalizer,
         PostRepository $repository,
         ValidatorInterface $validator
     ): Response {
@@ -36,18 +35,7 @@ class PostController extends AbstractController
         ]);
 
         if (0 < $errors->count()) {
-            $normalizedErrors = [];
-            /** @var ConstraintViolationInterface $error */
-            foreach ($errors as $error) {
-                $normalizedErrors[] = [
-                    'path' => $error->getPropertyPath(),
-                    'value' => $page,
-                    'error_code' => $error->getCode(),
-                    'error_message' => $error->getMessage(),
-                ];
-            }
-
-            return $this->json($normalizedErrors, Response::HTTP_PRECONDITION_FAILED);
+            return $this->json($normalizer->normalize($errors), Response::HTTP_PRECONDITION_FAILED);
         }
 
         $posts = $repository->findBy([], ['createdAt' => 'DESC'], self::POST_PER_PAGE, ($page - 1) * self::POST_PER_PAGE);
