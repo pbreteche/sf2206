@@ -4,7 +4,6 @@ namespace App\Controller;
 
 use App\Entity\KeyWord;
 use App\Entity\Post;
-use App\Normalizer\ConstraintViolationListNormalizer;
 use App\Repository\PostRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -25,7 +24,6 @@ class PostController extends AbstractController
      */
     public function index(
         Request $request,
-        ConstraintViolationListNormalizer $normalizer,
         PostRepository $repository,
         ValidatorInterface $validator
     ): Response {
@@ -36,7 +34,7 @@ class PostController extends AbstractController
         ]);
 
         if (0 < $errors->count()) {
-            return $this->json($normalizer->normalize($errors), Response::HTTP_PRECONDITION_FAILED);
+            return $this->json($errors, Response::HTTP_PRECONDITION_FAILED);
         }
 
         $posts = $repository->findLatestPublishedDQL(self::POST_PER_PAGE, ($page - 1) * self::POST_PER_PAGE);
@@ -72,8 +70,7 @@ class PostController extends AbstractController
         Request $request,
         EntityManagerInterface $manager,
         SerializerInterface $serializer,
-        ValidatorInterface $validator,
-        ConstraintViolationListNormalizer $normalizer
+        ValidatorInterface $validator
     ): Response {
         $post = $serializer->deserialize($request->getContent(), Post::class, 'json');
         $post->setCreatedAt(new \DateTimeImmutable());
@@ -81,7 +78,7 @@ class PostController extends AbstractController
         $errors = $validator->validate($post, null, ['create', 'Default']);
 
         if (0 < $errors->count()) {
-            return $this->json($normalizer->normalize($errors), Response::HTTP_PRECONDITION_FAILED);
+            return $this->json($errors, Response::HTTP_PRECONDITION_FAILED);
         }
 
         $manager->persist($post);
@@ -100,8 +97,7 @@ class PostController extends AbstractController
         Request $request,
         SerializerInterface $serializer,
         EntityManagerInterface $manager,
-        ValidatorInterface $validator,
-        ConstraintViolationListNormalizer $normalizer
+        ValidatorInterface $validator
     ): Response {
         $serializer->deserialize($request->getContent(), Post::class, 'json', [
             AbstractNormalizer::OBJECT_TO_POPULATE => $post,
@@ -111,7 +107,7 @@ class PostController extends AbstractController
         $errors = $validator->validate($post);
 
         if (0 < $errors->count()) {
-            return $this->json($normalizer->normalize($errors), Response::HTTP_PRECONDITION_FAILED);
+            return $this->json($errors, Response::HTTP_PRECONDITION_FAILED);
         }
 
         $manager->flush($post);

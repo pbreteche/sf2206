@@ -2,12 +2,13 @@
 
 namespace App\Normalizer;
 
+use Symfony\Component\Serializer\Normalizer\ContextAwareNormalizerInterface;
 use Symfony\Component\Validator\ConstraintViolationInterface;
 use Symfony\Component\Validator\ConstraintViolationListInterface;
 
-class ConstraintViolationListNormalizer
+class ConstraintViolationListNormalizer implements ContextAwareNormalizerInterface
 {
-    public function normalize(ConstraintViolationListInterface $errors)
+    public function normalize($errors, string $format = null, array $context = [])
     {
         $normalizedErrors = [];
         /** @var ConstraintViolationInterface $error */
@@ -21,5 +22,10 @@ class ConstraintViolationListNormalizer
         }
 
         return $normalizedErrors;
+    }
+
+    public function supportsNormalization($data, string $format = null, array $context = [])
+    {
+        return $data instanceof ConstraintViolationListInterface;
     }
 }
