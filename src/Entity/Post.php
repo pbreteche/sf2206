@@ -47,6 +47,7 @@ class Post
 
     /**
      * @ORM\ManyToMany(targetEntity=KeyWord::class)
+     * @Groups("detail")
      */
     private $keywords;
 
