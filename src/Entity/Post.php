@@ -38,6 +38,11 @@ class Post
      */
     private $createdAt;
 
+    /**
+     * @ORM\ManyToOne(targetEntity=Category::class)
+     */
+    private $attachedTo;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -75,6 +80,18 @@ class Post
     public function setCreatedAt(\DateTimeImmutable $createdAt): self
     {
         $this->createdAt = $createdAt;
+
+        return $this;
+    }
+
+    public function getAttachedTo(): ?Category
+    {
+        return $this->attachedTo;
+    }
+
+    public function setAttachedTo(?Category $attachedTo): self
+    {
+        $this->attachedTo = $attachedTo;
 
         return $this;
     }
