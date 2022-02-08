@@ -14,12 +14,16 @@ use Symfony\Component\Serializer\SerializerInterface;
 
 class PostController extends AbstractController
 {
+    private const POST_PER_PAGE = 5;
+
     /**
      * @Route("/post", methods="GET")
      */
-    public function index(PostRepository $repository): Response
+    public function index(PostRepository $repository, Request $request): Response
     {
-        $posts = $repository->findAll();
+        $page = $request->query->get('page', 1);
+
+        $posts = $repository->findBy([], ['createdAt' => 'DESC'], self::POST_PER_PAGE, ($page - 1) * self::POST_PER_PAGE);
 
         return $this->json($posts, Response::HTTP_OK, [], [
             AbstractNormalizer::GROUPS => ['main'],
