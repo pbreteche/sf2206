@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\PostRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Serializer\Annotation\Ignore;
@@ -42,6 +44,16 @@ class Post
      * @ORM\ManyToOne(targetEntity=Category::class, inversedBy="posts", fetch="EAGER")
      */
     private $attachedTo;
+
+    /**
+     * @ORM\ManyToMany(targetEntity=KeyWord::class)
+     */
+    private $keywords;
+
+    public function __construct()
+    {
+        $this->keywords = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -105,5 +117,29 @@ class Post
             return $this->attachedTo->getName();
         }
         return null;
+    }
+
+    /**
+     * @return Collection|KeyWord[]
+     */
+    public function getKeywords(): Collection
+    {
+        return $this->keywords;
+    }
+
+    public function addKeyword(KeyWord $keyword): self
+    {
+        if (!$this->keywords->contains($keyword)) {
+            $this->keywords[] = $keyword;
+        }
+
+        return $this;
+    }
+
+    public function removeKeyword(KeyWord $keyword): self
+    {
+        $this->keywords->removeElement($keyword);
+
+        return $this;
     }
 }
