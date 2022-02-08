@@ -38,7 +38,7 @@ class PostController extends AbstractController
             return $this->json($normalizer->normalize($errors), Response::HTTP_PRECONDITION_FAILED);
         }
 
-        $posts = $repository->findLatestPublished(self::POST_PER_PAGE, ($page - 1) * self::POST_PER_PAGE);
+        $posts = $repository->findLatestPublishedDQL(self::POST_PER_PAGE, ($page - 1) * self::POST_PER_PAGE);
 
         return $this->json($posts, Response::HTTP_OK, [], [
             AbstractNormalizer::GROUPS => ['main'],

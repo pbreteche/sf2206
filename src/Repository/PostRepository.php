@@ -34,4 +34,21 @@ class PostRepository extends ServiceEntityRepository
             ->getResult()
         ;
     }
+
+    /**
+     * @return Post[] Returns an array of Post objects
+     */
+    public function findLatestPublishedDQL(int $maxResults, int $offset)
+    {
+        return $this
+            ->getEntityManager()->createQuery(
+                'SELECT post FROM '.Post::class.' post '.
+                'WHERE post.createdAt <= CURRENT_DATE() '.
+                'ORDER BY post.createdAt DESC'
+            )
+            ->setMaxResults($maxResults)
+            ->setFirstResult($offset)
+            ->getResult()
+        ;
+    }
 }
