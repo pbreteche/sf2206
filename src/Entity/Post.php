@@ -39,8 +39,7 @@ class Post
     private $createdAt;
 
     /**
-     * @ORM\ManyToOne(targetEntity=Category::class, fetch="EAGER")
-     * @ORM\JoinColumn()
+     * @ORM\ManyToOne(targetEntity=Category::class, inversedBy="posts", fetch="EAGER")
      */
     private $attachedTo;
 
