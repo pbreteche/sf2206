@@ -19,32 +19,19 @@ class PostRepository extends ServiceEntityRepository
         parent::__construct($registry, Post::class);
     }
 
-    // /**
-    //  * @return Post[] Returns an array of Post objects
-    //  */
-    /*
-    public function findByExampleField($value)
+     /**
+      * @return Post[] Returns an array of Post objects
+      */
+    public function findLatestPublished(int $maxResults, int $offset)
     {
-        return $this->createQueryBuilder('p')
-            ->andWhere('p.exampleField = :val')
-            ->setParameter('val', $value)
-            ->orderBy('p.id', 'ASC')
-            ->setMaxResults(10)
+        return $this
+            ->createQueryBuilder('post')
+            ->andWhere('post.createdAt <= CURRENT_DATE()')
+            ->orderBy('post.createdAt', 'DESC')
             ->getQuery()
+            ->setMaxResults($maxResults)
+            ->setFirstResult($offset)
             ->getResult()
         ;
     }
-    */
-
-    /*
-    public function findOneBySomeField($value): ?Post
-    {
-        return $this->createQueryBuilder('p')
-            ->andWhere('p.exampleField = :val')
-            ->setParameter('val', $value)
-            ->getQuery()
-            ->getOneOrNullResult()
-        ;
-    }
-    */
 }
