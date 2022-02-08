@@ -11,6 +11,11 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
 use Symfony\Component\Serializer\SerializerInterface;
+use Symfony\Component\Validator\Constraints\Positive;
+use Symfony\Component\Validator\Constraints\Regex;
+use Symfony\Component\Validator\Constraints\Type;
+use Symfony\Component\Validator\ConstraintViolationInterface;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class PostController extends AbstractController
 {
@@ -19,9 +24,31 @@ class PostController extends AbstractController
     /**
      * @Route("/post", methods="GET")
      */
-    public function index(PostRepository $repository, Request $request): Response
-    {
+    public function index(
+        Request $request,
+        PostRepository $repository,
+        ValidatorInterface $validator
+    ): Response {
         $page = $request->query->get('page', 1);
+
+        $errors = $validator->validate($page, [
+            new Regex('/^[1-9]\d*$/', 'page should be only digits starting with "1 - 9"'),
+        ]);
+
+        if (0 < $errors->count()) {
+            $normalizedErrors = [];
+            /** @var ConstraintViolationInterface $error */
+            foreach ($errors as $error) {
+                $normalizedErrors[] = [
+                    'path' => $error->getPropertyPath(),
+                    'value' => $page,
+                    'error_code' => $error->getCode(),
+                    'error_message' => $error->getMessage(),
+                ];
+            }
+
+            return $this->json($normalizedErrors, Response::HTTP_PRECONDITION_FAILED);
+        }
 
         $posts = $repository->findBy([], ['createdAt' => 'DESC'], self::POST_PER_PAGE, ($page - 1) * self::POST_PER_PAGE);
 
