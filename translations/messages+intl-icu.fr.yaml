@@ -1,0 +1,19 @@
+global:
+  default_value: Valeur par défaut
+  title: titre
+  welcome: Bienvenue dans les traductions Symfony
+  last_visit: "Votre dernière connexion : {last, date, long}"
+
+entity:
+  post:
+    title: intitulé
+
+mail:
+  inbox:
+    unread: Vous avez {count} courrier(s) non lu(s) et le mot accountant existait en français ?
+    unread2: >-
+      {count, plural,
+        =0    {Vous n'avez pas de nouveaux messages}
+        one   {Vous avez un nouveau message}
+        other {Vous avez # nouveaux messages}
+      }

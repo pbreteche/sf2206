@@ -21,12 +21,17 @@ class DemoController extends AbstractController
         $option = $request->query->get('option', 'global.default_value'); // $_GET
         $requestBody = $request->getContent();
         $postData = $request->request->all(); // $_POST
+        $languageHeader = $request->headers->get('Accept-language', 'fr');
+        // Recherche par mi les langues passées en paramètre de quelle serait la préférée
+        $preferredLanguage = $request->getPreferredLanguage(['fr', 'en', 'ru']);
 
         return $this->json([
             'id' => $id,
             'url' => $this->generateUrl('index2', ['id' => $id]),
             'option' => $translator->trans('global.default_value'),
-            'trans_placeholders' => $translator->trans('mail.inbox.unread', ['%count%' => 12]),
+            'trans_placeholders' => $translator->trans('mail.inbox.unread', ['count' => 12]),
+            'trans_plural' => $translator->trans('mail.inbox.unread2', ['count' => 0]),
+            'trans_date' => $translator->trans('global.last_visit', ['last' => new \DateTimeImmutable('yesterday')]),
         ]);
     }
 }
