@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\KeyWord;
 use App\Entity\Post;
 use App\Repository\PostRepository;
+use App\Serializer\PostSerializer;
 use App\Validator\PageNumber;
 use Doctrine\ORM\EntityManagerInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
@@ -101,14 +102,11 @@ class PostController extends AbstractController
     public function update(
         Post $post,
         Request $request,
-        SerializerInterface $serializer,
+        PostSerializer $serializer,
         EntityManagerInterface $manager,
         ValidatorInterface $validator
     ): Response {
-        $serializer->deserialize($request->getContent(), Post::class, 'json', [
-            AbstractNormalizer::OBJECT_TO_POPULATE => $post,
-            AbstractNormalizer::IGNORED_ATTRIBUTES => ['createdAt'],
-        ]);
+        $serializer->deserialize($request->getContent(), $post);
 
         $errors = $validator->validate($post);
 
