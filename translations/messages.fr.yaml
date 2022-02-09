@@ -1,13 +1,12 @@
-# Utiliser une langue de développement "par défaut"
-Welcome to Symfony translations: Bienvenue dans les traductions Symfony
+global:
+  default_value: Valeur par défaut
+  title: titre
+  welcome: Bienvenue dans les traductions Symfony
 
-# la clé
-# la langue utilisateur (normalement à partir de la requête HTTP)
-# les langues disponibles dans les catalogues
+entity:
+  post:
+    title: intitulé
 
-# Utiliser des clés sémantiques
-# -> mettre en place des systèmes de nommage
-# -> traduction différente même si même mot dans la langue d'origine
-global.welcome: Bienvenue dans les traductions Symfony
-global.title: titre
-entity.post.title: intitulé
+mail:
+  inbox:
+    unread: Vous avez %count% courrier(s) non lu(s) et le mot accountant existait en français ?

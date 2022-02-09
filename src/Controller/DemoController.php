@@ -5,6 +5,7 @@ namespace App\Controller;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class DemoController extends AbstractController
 {
@@ -15,18 +16,17 @@ class DemoController extends AbstractController
         ]);
     }
 
-    public function index2(int $id, Request $request): Response
+    public function index2(int $id, Request $request, TranslatorInterface $translator): Response
     {
-        $option = $request->query->get('option', 'valeur par défaut'); // $_GET
+        $option = $request->query->get('option', 'global.default_value'); // $_GET
         $requestBody = $request->getContent();
         $postData = $request->request->all(); // $_POST
-
-        dump($postData);
 
         return $this->json([
             'id' => $id,
             'url' => $this->generateUrl('index2', ['id' => $id]),
-            'option' => $option,
+            'option' => $translator->trans('global.default_value'),
+            'trans_placeholders' => $translator->trans('mail.inbox.unread', ['%count%' => 12]),
         ]);
     }
 }
