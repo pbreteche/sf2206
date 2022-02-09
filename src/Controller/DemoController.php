@@ -21,9 +21,7 @@ class DemoController extends AbstractController
         $option = $request->query->get('option', 'global.default_value'); // $_GET
         $requestBody = $request->getContent();
         $postData = $request->request->all(); // $_POST
-        $languageHeader = $request->headers->get('Accept-language', 'fr');
-        // Recherche par mi les langues passées en paramètre de quelle serait la préférée
-        $preferredLanguage = $request->getPreferredLanguage(['fr', 'en', 'ru']);
+        $locale = $request->getLocale();
 
         return $this->json([
             'id' => $id,
