@@ -3,11 +3,14 @@
 namespace App\Entity;
 
 use App\Repository\KeyWordRepository;
+use App\Validator\UniqueKeyword;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Entity(repositoryClass=KeyWordRepository::class)
+ * @UniqueKeyword
  */
 class KeyWord
 {
@@ -22,6 +25,7 @@ class KeyWord
     /**
      * @ORM\Column(type="string", length=255)
      * @Groups("main")
+     * @Assert\NotBlank
      */
     private $name;
 
