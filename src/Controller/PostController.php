@@ -7,6 +7,7 @@ use App\Entity\Post;
 use App\Repository\PostRepository;
 use App\Validator\PageNumber;
 use Doctrine\ORM\EntityManagerInterface;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -63,6 +64,7 @@ class PostController extends AbstractController
 
     /**
      * @Route("/post", methods="POST")
+     * @IsGranted("ROLE_ADMIN")
      */
     public function new(
         Request $request,
@@ -72,6 +74,12 @@ class PostController extends AbstractController
     ): Response {
         $post = $serializer->deserialize($request->getContent(), Post::class, 'json');
         $post->setCreatedAt(new \DateTimeImmutable());
+
+        if (!$this->isGranted("ROLE_ADMIN")) {
+            throw $this->createAccessDeniedException();
+        }
+
+        $this->denyAccessUnlessGranted("ROLE_ADMIN");
 
         $errors = $validator->validate($post, null, ['create', 'Default']);
 
